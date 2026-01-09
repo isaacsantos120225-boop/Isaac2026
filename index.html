@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Convite do Isaac - 1 Ano</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+    {
+      "imports": {
+        "canvas-confetti": "https://esm.sh/canvas-confetti@1.6.0"
+      }
+    }
+    </script>
+</head>
+<body>
+    <!-- Intro Screen -->
+    <div id="intro-screen" class="overlay">
+        <div class="intro-content">
+            <img src="simba.png" alt="Simba" class="bounce">
+            <h1>O Reino de Isaac</h1>
+            <button id="start-btn" class="main-btn">Clique para abrir o convite</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="hidden">
+        <div class="invite-card">
+            <img src="leaves.png" class="leaf leaf-tl" alt="">
+            <img src="leaves.png" class="leaf leaf-tr" alt="">
+            
+            <header>
+                <img src="simba.png" id="simba-main" class="character sway" alt="Simba">
+                <h1 class="title">Isaac</h1>
+                <h2 class="subtitle">Meu 1º Aninho</h2>
+            </header>
+
+            <section class="message">
+                <p>Uma grande aventura nos espera, e convidamos você para comemorar o primeiro reinado do nosso pequeno leão!</p>
+            </section>
+
+            <section class="info-grid">
+                <div class="info-item">
+                    <span class="icon">📅</span>
+                    <p>28 de Fevereiro de 2026</p>
+                </div>
+                <div class="info-item">
+                    <span class="icon">⏰</span>
+                    <p>19:00 horas</p>
+                </div>
+                <div class="info-item">
+                    <span class="icon">📍</span>
+                    <p><strong>Salão Simão kids casa 1</strong><br>
+                    R. Gonçalves Gato, 29 - Centro, Belford Roxo - RJ</p>
+                </div>
+            </section>
+
+            <div class="deadline">
+                ⚠️ Confirmar presença até 10/02/2026
+            </div>
+
+            <div class="actions">
+                <button id="btn-map" class="btn secondary">Ver no Mapa</button>
+                <button id="btn-gifts" class="btn secondary">Sugestão de Presentes</button>
+                <button id="btn-confirm" class="btn primary pulse">Confirmar Presença</button>
+                <button id="btn-decline" class="btn outline">Não poderei ir</button>
+            </div>
+
+            <div class="characters-footer">
+                <img src="timon_pumbaa.png" class="character bounce-slow" alt="Timon e Pumbaa">
+            </div>
+
+            <button id="mute-btn" class="fab">🔊</button>
+            <button id="admin-trigger" class="fab admin-fab">🔐</button>
+        </div>
+    </main>
+
+    <!-- Modal Gift Suggestions -->
+    <div id="modal-gifts" class="modal hidden">
+        <div class="modal-content">
+            <h3>Presentes 🎁</h3>
+            <p>Se desejar nos presentear, aqui estão algumas sugestões:</p>
+            <ul>
+                <li>👟 Calçado: 18/19</li>
+                <li>👕 Roupa: 1/2 anos</li>
+                <li>🧸 Brinquedos em geral</li>
+            </ul>
+            <button class="btn primary close-modal">Fechar</button>
+        </div>
+    </div>
+
+    <!-- Modal Confirm -->
+    <div id="modal-confirm" class="modal hidden">
+        <div class="modal-content">
+            <h3>Confirmar Presença</h3>
+            <p>Convidados (contando com você):</p>
+            <form id="form-confirm">
+                <input type="text" id="confirm-name" placeholder="Seu nome" required>
+                <input type="number" id="confirm-qty" placeholder="Quantas pessoas?" min="1" max="10" required>
+                <div id="guest-details-container"></div>
+                <button type="submit" class="btn primary">Confirmar!</button>
+                <button type="button" class="btn outline close-modal">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Decline -->
+    <div id="modal-decline" class="modal hidden">
+        <div class="modal-content">
+            <h3>Sentiremos sua falta!</h3>
+            <form id="form-decline">
+                <input type="text" id="decline-name" placeholder="Seu nome" required>
+                <button type="submit" class="btn primary">Enviar</button>
+                <button type="button" class="btn outline close-modal">Cancelar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="admin-panel" class="modal hidden">
+        <div class="admin-container">
+            <h3>Painel Administrativo</h3>
+            <div id="admin-login">
+                <input type="password" id="admin-pass" placeholder="Senha">
+                <button id="btn-login" class="btn primary">Entrar</button>
+                <button class="btn outline close-modal">Voltar</button>
+            </div>
+            <div id="admin-content" class="hidden">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="tab-confirmed">Confirmados (<span id="count-confirmed">0</span>)</button>
+                    <button class="tab-btn" data-tab="tab-declined">Ausentes (<span id="count-declined">0</span>)</button>
+                </div>
+                <div id="tab-confirmed" class="tab-pane active">
+                    <div class="list-wrapper">
+                        <table id="table-confirmed">
+                            <thead>
+                                <tr><th>Nome</th><th>Qtd</th><th>Detalhes</th><th>Ação</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="tab-declined" class="tab-pane">
+                    <div class="list-wrapper">
+                        <table id="table-declined">
+                            <thead>
+                                <tr><th>Nome</th><th>Ação</th></tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="admin-actions">
+                    <button id="btn-print" class="btn secondary">Imprimir Lista</button>
+                    <button id="btn-export-wa" class="btn primary">Exportar para WhatsApp</button>
+                    <button class="btn outline close-modal">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Success Feedback -->
+    <div id="success-feedback" class="modal hidden">
+        <div class="modal-content">
+            <div class="success-icon">🦁</div>
+            <p id="feedback-text"></p>
+            <button class="btn primary close-modal">Fechar</button>
+        </div>
+    </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>
